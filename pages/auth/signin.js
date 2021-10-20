@@ -1,9 +1,27 @@
-function signIn() {
+import { getProviders, signIn as signIntoProvider } from "next-auth/react"; 
+
+function signIn({ providers }) {
     return (
-        <div>
-            <h1>Sign In Here</h1>
-        </div>
-    )
+        <>
+            {Object.values(providers).map((provider) => (
+                <div key={provider.name}>
+                    <button onClick={() => signIntoProvider(provider.id)}>
+                        Sign in with {provider.name}
+                    </button>
+                </div>
+            ))}
+        </>
+    );
 }
 
-export default signIn
+export async function getServerSideProps() {
+    const providers = await getProviders();
+
+    return  {
+        props: {
+            providers
+        }
+    }
+}
+
+export default signIn;
